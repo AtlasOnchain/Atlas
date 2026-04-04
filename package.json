@@ -1,0 +1,29 @@
+{
+  "name": "atlas",
+  "version": "0.1.0",
+  "description": "Smart money tracker — watches whale and VC wallets on Solana and alerts when they make significant moves",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "bun run index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.2.0"
+  }
+}
