@@ -1,0 +1,81 @@
+<svg width="720" height="360" viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" font-family="'Inter','Segoe UI','Arial',sans-serif">
+  <defs>
+    <linearGradient id="alertBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d0b1e"/>
+      <stop offset="100%" stop-color="#130d2e"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e1640"/>
+      <stop offset="100%" stop-color="#150f35"/>
+    </linearGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="720" height="360" fill="url(#alertBg)"/>
+
+  <!-- ambient glow behind card -->
+  <ellipse cx="360" cy="180" rx="260" ry="140" fill="#6d28d9" opacity="0.06" filter="url(#softglow)"/>
+
+  <!-- header -->
+  <text x="360" y="36" fill="#6b5fa0" font-size="12" text-anchor="middle" letter-spacing="3">ATLAS SMART MONEY</text>
+
+  <!-- main card -->
+  <rect x="80" y="54" width="560" height="236" rx="16" fill="url(#cardGrad)" stroke="#3b2f6e" stroke-width="1.5"/>
+  <!-- top accent bar -->
+  <rect x="80" y="54" width="560" height="5" rx="3" fill="#7c3aed"/>
+
+  <!-- alert type badge -->
+  <rect x="280" y="42" width="160" height="26" rx="13" fill="#3b0764"/>
+  <text x="360" y="59" fill="#c4b5fd" font-size="12" font-weight="700" text-anchor="middle" letter-spacing="1">▲ ACCUMULATING</text>
+
+  <!-- wallet info block -->
+  <circle cx="156" cy="130" r="28" fill="#2e2060"/>
+  <text x="156" y="126" fill="#a78bfa" font-size="18" font-weight="700" text-anchor="middle">MC</text>
+  <text x="156" y="144" fill="#6b5fa0" font-size="10" text-anchor="middle">VC FUND</text>
+
+  <text x="204" y="116" fill="#e2e8f0" font-size="18" font-weight="700">Multicoin Capital</text>
+  <text x="204" y="136" fill="#6b5fa0" font-size="12">9WzDXwBb…tAWWM · Tier-1 VC</text>
+  <text x="204" y="156" fill="#4b3f72" font-size="11">Solana ecosystem fund · >$500M AUM · known early SOL buyer</text>
+
+  <!-- divider -->
+  <rect x="108" y="172" width="504" height="1" fill="#2d2550"/>
+
+  <!-- stats row -->
+  <text x="130" y="196" fill="#6b5fa0" font-size="10" text-anchor="middle">TOKEN</text>
+  <text x="130" y="214" fill="#c4b5fd" font-size="20" font-weight="700" text-anchor="middle">JTO</text>
+
+  <rect x="168" y="188" width="1" height="36" fill="#2d2550"/>
+
+  <text x="260" y="196" fill="#6b5fa0" font-size="10" text-anchor="middle">AMOUNT</text>
+  <text x="260" y="214" fill="#4ade80" font-size="20" font-weight="700" text-anchor="middle">+2,840 SOL</text>
+
+  <rect x="340" y="188" width="1" height="36" fill="#2d2550"/>
+
+  <text x="430" y="196" fill="#6b5fa0" font-size="10" text-anchor="middle">EST. VALUE</text>
+  <text x="430" y="214" fill="#e2e8f0" font-size="20" font-weight="700" text-anchor="middle">~$284K</text>
+
+  <rect x="510" y="188" width="1" height="36" fill="#2d2550"/>
+
+  <text x="580" y="196" fill="#6b5fa0" font-size="10" text-anchor="middle">CONFIDENCE</text>
+  <text x="580" y="214" fill="#a78bfa" font-size="20" font-weight="700" text-anchor="middle">0.91</text>
+
+  <!-- rationale -->
+  <rect x="108" y="232" width="504" height="1" fill="#2d2550"/>
+  <text x="360" y="254" fill="#8b7cc8" font-size="12" text-anchor="middle">Steady accumulation across 8 txns · JTO moved in, no outflows · correlated with Jito Foundation wallet</text>
+  <text x="360" y="272" fill="#4b3f72" font-size="11" text-anchor="middle">12 minutes ago</text>
+
+  <!-- confidence bar -->
+  <rect x="108" y="298" width="504" height="6" rx="3" fill="#1e1640"/>
+  <rect x="108" y="298" width="458" height="6" rx="3" fill="#7c3aed"/>
+  <circle cx="566" cy="301" r="7" fill="#a78bfa" filter="url(#glow2)"/>
+
+  <!-- bottom -->
+  <text x="360" y="340" fill="#2d2550" font-size="10" text-anchor="middle">atlas · built with claude agent sdk · helius rpc</text>
+</svg>
