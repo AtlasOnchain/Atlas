@@ -1,7 +1,7 @@
 {
   "name": "atlas",
   "version": "0.1.0",
-  "description": "Smart money tracker — watches whale and VC wallets on Solana and alerts when they make significant moves",
+  "description": "Solana capital-flow mapper that tracks origin wallets, propagation lag, and sector rotation",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

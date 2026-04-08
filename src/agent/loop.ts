@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { WalletActivity, SmartMoneyAlert, WalletAction, WalletLabel } from "../types.js";
+import type { WalletActivity, SmartMoneyAlert, WalletAction, WalletLabel, Sector } from "../types.js";
 import { ATLAS_SYSTEM } from "./prompts.js";
 import { config } from "../config.js";
 import { log } from "../logger.js";
@@ -10,7 +10,7 @@ const client = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY });
 const tools: Anthropic.Tool[] = [
   {
     name: "get_batch_overview",
-    description: "Overview of all wallets scanned this cycle — active count, top movers, net SOL flows",
+    description: "Overview of all wallets scanned this cycle with sector and top-move context",
     input_schema: { type: "object" as const, properties: {} },
   },
   {
@@ -26,7 +26,7 @@ const tools: Anthropic.Tool[] = [
   },
   {
     name: "find_correlated_moves",
-    description: "Find all wallets that moved the same token this cycle — multi-wallet correlation is a strong signal",
+    description: "Find all wallets that moved the same token this cycle",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -37,7 +37,7 @@ const tools: Anthropic.Tool[] = [
   },
   {
     name: "emit_alert",
-    description: "Emit a smart money alert for a significant wallet action",
+    description: "Emit a capital-flow alert for a significant wallet action",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -46,21 +46,23 @@ const tools: Anthropic.Tool[] = [
         wallet_label: { type: "string", enum: ["vc", "whale", "protocol", "dex", "cex", "unknown"] },
         action: {
           type: "string",
-          enum: ["accumulating", "distributing", "farming", "bridging", "swapping", "staking", "unknown"],
+          enum: ["originating", "propagating", "distributing", "rotating", "staking", "unknown"],
         },
         tokens: { type: "array", items: { type: "string" } },
+        sector: { type: "string", enum: ["meme", "ai", "infra", "staking", "stable-yield", "unknown"] },
         estimated_usd: { type: "number" },
+        propagation_score: { type: "number" },
         rationale: { type: "string" },
         confidence: { type: "number" },
       },
-      required: ["wallet_address", "wallet_name", "wallet_label", "action", "tokens", "estimated_usd", "rationale", "confidence"],
+      required: ["wallet_address", "wallet_name", "wallet_label", "action", "tokens", "sector", "estimated_usd", "propagation_score", "rationale", "confidence"],
     },
   },
 ];
 
 export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoneyAlert[]> {
   const alerts: SmartMoneyAlert[] = [];
-  const byAddress = new Map(batch.map((w) => [w.address, w]));
+  const byAddress = new Map(batch.map((wallet) => [wallet.address, wallet]));
 
   const tokenCorrelations = new Map<string, string[]>();
   for (const wallet of batch) {
@@ -75,7 +77,7 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
   const messages: Anthropic.MessageParam[] = [
     {
       role: "user",
-      content: `Scan complete. ${batch.length} wallets checked. Analyze the activity and emit alerts for significant smart money moves.`,
+      content: `Scan complete. ${batch.length} wallets checked. Analyze the activity and emit capital-flow alerts for meaningful origin, propagation, or rotation events.`,
     },
   ];
 
@@ -102,13 +104,14 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
 
       if (block.name === "get_batch_overview") {
         result = JSON.stringify(
-          batch.map((w) => ({
-            name: w.name,
-            label: w.label,
-            txCount: w.txCount,
-            netSolChange: (w.netSolChangeLamports / 1e9).toFixed(2) + " SOL",
-            topToken: w.topMoves[0] ? `${w.topMoves[0].symbol} ${w.topMoves[0].direction}` : "none",
-          }))
+          batch.map((wallet) => ({
+            name: wallet.name,
+            label: wallet.label,
+            txCount: wallet.txCount,
+            netSolChange: (wallet.netSolChangeLamports / 1e9).toFixed(2) + " SOL",
+            topToken: wallet.topMoves[0] ? `${wallet.topMoves[0].symbol} ${wallet.topMoves[0].direction}` : "none",
+            topSector: wallet.topMoves[0]?.sector ?? "unknown",
+          })),
         );
       } else if (block.name === "get_wallet_detail") {
         const wallet = byAddress.get(input.address as string);
@@ -123,9 +126,9 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
             })
           : "not found in this batch";
       } else if (block.name === "find_correlated_moves") {
-        const sym = (input.token_symbol as string).toUpperCase();
-        const wallets = tokenCorrelations.get(sym) ?? [];
-        result = JSON.stringify({ token: sym, movedByWallets: wallets, count: wallets.length });
+        const symbol = (input.token_symbol as string).toUpperCase();
+        const wallets = tokenCorrelations.get(symbol) ?? [];
+        result = JSON.stringify({ token: symbol, movedByWallets: wallets, count: wallets.length });
       } else if (block.name === "emit_alert") {
         const alert: SmartMoneyAlert = {
           id: crypto.randomUUID(),
@@ -134,14 +137,16 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
           walletLabel: input.wallet_label as WalletLabel,
           action: input.action as WalletAction,
           tokens: input.tokens as string[],
+          sector: input.sector as Sector,
           estimatedUsd: input.estimated_usd as number,
+          propagationScore: input.propagation_score as number,
           rationale: input.rationale as string,
           confidence: input.confidence as number,
           generatedAt: Date.now(),
         };
         if (alert.confidence >= config.ALERT_MIN_CONFIDENCE) {
           alerts.push(alert);
-          log.info(`Alert: ${alert.walletName} ${alert.action} [${alert.tokens.join(",")}] conf=${alert.confidence}`);
+          log.info(`Alert: ${alert.walletName} ${alert.action} [${alert.tokens.join(",")}] propagation=${alert.propagationScore}`);
         }
         result = JSON.stringify({ accepted: alert.confidence >= config.ALERT_MIN_CONFIDENCE, id: alert.id });
       }

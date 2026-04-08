@@ -18,36 +18,25 @@ const LABEL_COLOR: Record<string, string> = {
   unknown: DIM,
 };
 
-const ACTION_ICON: Record<string, string> = {
-  accumulating: "▲",
-  distributing: "▼",
-  farming: "◆",
-  bridging: "→",
-  swapping: "⇄",
-  staking: "⬡",
-  unknown: "?",
-};
-
 export function printAlert(alert: SmartMoneyAlert): void {
   const color = LABEL_COLOR[alert.walletLabel] ?? DIM;
-  const icon = ACTION_ICON[alert.action] ?? "?";
   const tokens = alert.tokens.join(", ") || "unknown";
-  const usd = alert.estimatedUsd > 0 ? ` · ~$${alert.estimatedUsd.toLocaleString()}` : "";
-  const addr = `${alert.walletAddress.slice(0, 8)}…${alert.walletAddress.slice(-6)}`;
+  const usd = alert.estimatedUsd > 0 ? ` | ~$${alert.estimatedUsd.toLocaleString()}` : "";
+  const addr = `${alert.walletAddress.slice(0, 8)}...${alert.walletAddress.slice(-6)}`;
 
-  console.log(`\n  ${BOLD}${icon} ${alert.action.toUpperCase()}${RESET}  ${color}[${alert.walletLabel}]${RESET} ${alert.walletName}`);
-  console.log(`     tokens: ${BOLD}${tokens}${RESET}${usd}  conf: ${alert.confidence.toFixed(2)}`);
+  console.log(`\n  ${BOLD}${alert.action.toUpperCase()}${RESET} ${color}[${alert.walletLabel}]${RESET} ${alert.walletName}`);
+  console.log(`     sector: ${alert.sector} | tokens: ${BOLD}${tokens}${RESET}${usd} | propagation ${alert.propagationScore.toFixed(2)}`);
   console.log(`     ${DIM}${alert.rationale}${RESET}`);
   console.log(`     ${DIM}${addr}${RESET}`);
 }
 
 export function printAlertBoard(alerts: SmartMoneyAlert[]): void {
-  const bar = "─".repeat(68);
+  const bar = "-".repeat(76);
   console.log(`\n${bar}`);
-  console.log(`  ${BOLD}ATLAS — SMART MONEY ALERTS${RESET}  (${alerts.length} this cycle)`);
+  console.log(`  ${BOLD}ATLAS // CAPITAL FLOW MAP${RESET} (${alerts.length} new edges)`);
   console.log(bar);
   if (alerts.length === 0) {
-    console.log(`  ${DIM}no significant moves detected${RESET}`);
+    console.log(`  ${DIM}no capital propagation events detected${RESET}`);
   } else {
     for (const alert of alerts) printAlert(alert);
   }

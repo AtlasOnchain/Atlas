@@ -12,8 +12,8 @@ export function getRecentAlerts(limit = 20): SmartMoneyAlert[] {
 }
 
 export function getAlertsByToken(token: string): SmartMoneyAlert[] {
-  const t = token.toUpperCase();
-  return sessionAlerts.filter((a) => a.tokens.map((x) => x.toUpperCase()).includes(t));
+  const upper = token.toUpperCase();
+  return sessionAlerts.filter((alert) => alert.tokens.map((value) => value.toUpperCase()).includes(upper));
 }
 
 export function getStats(): Record<string, number> {

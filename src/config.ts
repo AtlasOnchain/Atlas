@@ -9,7 +9,10 @@ const schema = z.object({
   SCAN_INTERVAL_MS: z.coerce.number().default(60_000),
   MIN_TRANSFER_SOL: z.coerce.number().default(100),
   MAX_TXS_PER_WALLET: z.coerce.number().default(10),
-  ALERT_MIN_CONFIDENCE: z.coerce.number().default(0.70),
+  ALERT_MIN_CONFIDENCE: z.coerce.number().default(0.7),
+  MIN_PROPAGATION_LAG_SECONDS: z.coerce.number().default(15),
+  MAX_PROPAGATION_LAG_SECONDS: z.coerce.number().default(300),
+  COPY_SATURATION_THRESHOLD: z.coerce.number().default(0.55),
   SEED_WALLETS: z.string().default(""),
 });
 

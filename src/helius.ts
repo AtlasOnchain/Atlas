@@ -1,11 +1,9 @@
-import type { WalletActivity, TokenMove, WalletLabel } from "./types.js";
+import type { WalletActivity, TokenMove, WalletLabel, Sector } from "./types.js";
 import { config, HELIUS_BASE } from "./config.js";
 
 interface HeliusTx {
   signature: string;
   timestamp: number;
-  type: string;
-  source: string;
   nativeTransfers: Array<{ fromUserAccount: string; toUserAccount: string; amount: number }>;
   tokenTransfers: Array<{
     fromUserAccount: string;
@@ -16,47 +14,58 @@ interface HeliusTx {
   }>;
 }
 
+function inferSector(symbol: string): Sector {
+  const upper = symbol.toUpperCase();
+  if (["BONK", "WIF", "POPCAT", "PENGU"].includes(upper)) return "meme";
+  if (["JTO", "JUP", "PYTH"].includes(upper)) return "infra";
+  if (["SOL", "mSOL", "jitoSOL"].includes(upper)) return "staking";
+  if (["USDC", "USDT"].includes(upper)) return "stable-yield";
+  return "unknown";
+}
+
 export async function fetchWalletActivity(
   address: string,
   name: string,
-  label: WalletLabel
+  label: WalletLabel,
 ): Promise<WalletActivity> {
-  const url =
-    `${HELIUS_BASE}/addresses/${address}/transactions` +
-    `?api-key=${config.HELIUS_API_KEY}&limit=${config.MAX_TXS_PER_WALLET}`;
+  const url = `${HELIUS_BASE}/addresses/${address}/transactions?api-key=${config.HELIUS_API_KEY}&limit=${config.MAX_TXS_PER_WALLET}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Helius ${res.status} for ${address}`);
-  const txs: HeliusTx[] = await res.json() as HeliusTx[];
+  const txs = (await res.json()) as HeliusTx[];
 
   let netSolChangeLamports = 0;
-  const mintTotals = new Map<string, { symbol: string; net: number }>();
+  const mintTotals = new Map<string, { symbol: string; net: number; sector: Sector }>();
 
   for (const tx of txs) {
-    for (const t of tx.nativeTransfers) {
-      if (t.toUserAccount === address) netSolChangeLamports += t.amount;
-      if (t.fromUserAccount === address) netSolChangeLamports -= t.amount;
+    for (const transfer of tx.nativeTransfers) {
+      if (transfer.toUserAccount === address) netSolChangeLamports += transfer.amount;
+      if (transfer.fromUserAccount === address) netSolChangeLamports -= transfer.amount;
     }
-    for (const t of tx.tokenTransfers) {
-      const existing = mintTotals.get(t.mint) ?? {
-        symbol: t.symbol ?? t.mint.slice(0, 6),
+
+    for (const transfer of tx.tokenTransfers) {
+      const symbol = transfer.symbol ?? transfer.mint.slice(0, 6);
+      const existing = mintTotals.get(transfer.mint) ?? {
+        symbol,
         net: 0,
+        sector: inferSector(symbol),
       };
-      if (t.toUserAccount === address) existing.net += t.tokenAmount;
-      if (t.fromUserAccount === address) existing.net -= t.tokenAmount;
-      mintTotals.set(t.mint, existing);
+      if (transfer.toUserAccount === address) existing.net += transfer.tokenAmount;
+      if (transfer.fromUserAccount === address) existing.net -= transfer.tokenAmount;
+      mintTotals.set(transfer.mint, existing);
     }
   }
 
   const topMoves: TokenMove[] = Array.from(mintTotals.entries())
-    .filter(([, v]) => Math.abs(v.net) > 0)
+    .filter(([, value]) => Math.abs(value.net) > 0)
     .sort((a, b) => Math.abs(b[1].net) - Math.abs(a[1].net))
     .slice(0, 5)
-    .map(([mint, v]) => ({
+    .map(([mint, value]) => ({
       mint,
-      symbol: v.symbol,
-      amount: Math.abs(v.net),
-      direction: v.net > 0 ? "in" : "out",
+      symbol: value.symbol,
+      amount: Math.abs(value.net),
+      direction: value.net > 0 ? "in" : "out",
+      sector: value.sector,
     }));
 
   return {

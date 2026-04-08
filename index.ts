@@ -10,15 +10,11 @@ async function scan(): Promise<void> {
   const wallets = getAllWallets();
   log.info(`Scanning ${wallets.length} wallets...`);
 
-  const settled = await Promise.allSettled(
-    wallets.map((w) => fetchWalletActivity(w.address, w.name, w.label))
-  );
+  const settled = await Promise.allSettled(wallets.map((wallet) => fetchWalletActivity(wallet.address, wallet.name, wallet.label)));
 
   const successful = settled
-    .filter((r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof fetchWalletActivity>>> =>
-      r.status === "fulfilled"
-    )
-    .map((r) => r.value);
+    .filter((result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof fetchWalletActivity>>> => result.status === "fulfilled")
+    .map((result) => result.value);
 
   log.info(`${successful.length}/${wallets.length} wallets fetched`);
   if (successful.length === 0) return;
@@ -29,8 +25,8 @@ async function scan(): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  log.info("Atlas v0.1.0 — smart money tracker starting");
-  log.info(`Interval: ${config.SCAN_INTERVAL_MS / 1000}s · Min confidence: ${config.ALERT_MIN_CONFIDENCE}`);
+  log.info("Atlas v0.1.0 - capital flow mapper starting");
+  log.info(`Interval: ${config.SCAN_INTERVAL_MS / 1000}s | Min confidence: ${config.ALERT_MIN_CONFIDENCE}`);
 
   await scan();
 

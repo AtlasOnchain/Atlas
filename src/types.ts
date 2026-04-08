@@ -1,18 +1,13 @@
 export type WalletLabel = "vc" | "whale" | "protocol" | "dex" | "cex" | "unknown";
-export type WalletAction =
-  | "accumulating"
-  | "distributing"
-  | "farming"
-  | "bridging"
-  | "swapping"
-  | "staking"
-  | "unknown";
+export type WalletAction = "originating" | "propagating" | "distributing" | "rotating" | "staking" | "unknown";
+export type Sector = "meme" | "ai" | "infra" | "staking" | "stable-yield" | "unknown";
 
 export interface TrackedWallet {
   address: string;
   label: WalletLabel;
   name: string;
   tags: string[];
+  sectorBias?: Sector;
 }
 
 export interface TokenMove {
@@ -20,6 +15,7 @@ export interface TokenMove {
   symbol: string;
   amount: number;
   direction: "in" | "out";
+  sector: Sector;
 }
 
 export interface WalletActivity {
@@ -40,7 +36,9 @@ export interface SmartMoneyAlert {
   walletLabel: WalletLabel;
   action: WalletAction;
   tokens: string[];
+  sector: Sector;
   estimatedUsd: number;
+  propagationScore: number;
   rationale: string;
   confidence: number;
   generatedAt: number;
