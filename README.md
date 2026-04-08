@@ -144,6 +144,13 @@ COPY_SATURATION_THRESHOLD=0.55
 - Planned commit sequence: [`docs/commit-sequence.md`](docs/commit-sequence.md)
 - Draft engineering issues: [`docs/issue-drafts.md`](docs/issue-drafts.md)
 
+## Support Docs
+
+- [Runbook](docs/runbook.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+
 ## License
 
 MIT
