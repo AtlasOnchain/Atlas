@@ -1,6 +1,6 @@
 {
   "name": "atlas",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Solana capital-flow mapper that tracks origin wallets, propagation lag, and sector rotation",
   "type": "module",
   "main": "dist/index.js",
@@ -22,6 +22,12 @@
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
+  "keywords": [
+    "solana",
+    "wallets",
+    "propagation",
+    "capital-flows"
+  ],
   "engines": {
     "node": ">=20.0.0",
     "bun": ">=1.2.0"
