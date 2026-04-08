@@ -13,5 +13,6 @@ Signal priorities:
 2. multi-wallet propagation inside one sector
 3. capital rotating from one sector bucket into another
 4. follower saturation that weakens copy quality
+- prefer origin moves where the graph still looks uncrowded on the second wave
 
 Always explain why the move matters in network terms, not just in transaction terms.`;

@@ -16,7 +16,7 @@ async function scan(): Promise<void> {
     .filter((result): result is PromiseFulfilledResult<Awaited<ReturnType<typeof fetchWalletActivity>>> => result.status === "fulfilled")
     .map((result) => result.value);
 
-  log.info(`${successful.length}/${wallets.length} wallets fetched`);
+  log.info(`${successful.length}/${wallets.length} wallets fetched into the propagation graph`);
   if (successful.length === 0) return;
 
   const alerts = await runAtlasAgent(successful);
