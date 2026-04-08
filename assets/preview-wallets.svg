@@ -2,7 +2,7 @@
   <rect width="1200" height="720" fill="#111926"/>
   <rect x="36" y="34" width="1128" height="652" rx="28" fill="#152133" stroke="#27344c"/>
   <text x="74" y="88" fill="#ebf1f7" font-size="34" font-family="Arial">Atlas // Capital Flow Map</text>
-  <text x="74" y="120" fill="#8a9ab0" font-size="16" font-family="Arial">origin wallets, sector clusters, propagation lag, copy saturation</text>
+  <text x="74" y="120" fill="#8a9ab0" font-size="16" font-family="Arial">origin wallets, sector clusters, propagation lag, and crowding risk</text>
 
   <circle cx="220" cy="210" r="54" fill="#3c5e8f"/>
   <text x="184" y="216" fill="#edf4ff" font-size="18" font-family="Arial">Multicoin</text>
