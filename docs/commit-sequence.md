@@ -10,3 +10,5 @@
 8. `docs(readme): reposition repo as a capital-flow mapper`
 9. `design(assets): replace dashboard with observability-map visuals`
 10. `chore(copy): align env and package metadata with flow-mapping language`
+
+Operational note: keep wallet graph logic separate from alert copy and map polish so the history reads like actual research iteration.

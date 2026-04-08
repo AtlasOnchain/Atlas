@@ -17,6 +17,7 @@ Tracks origin wallets, follower propagation, and sector rotation across the on-c
 The edge in wallet intelligence is not seeing that a large wallet moved. It is knowing whether that wallet was first, whether others are copying it, and whether capital is rotating across sectors or simply shuffling inside the same bucket.
 
 `Atlas` tracks a curated wallet set, fetches recent Helius activity, infers sector exposure from token movement, and asks a Claude agent to emit capital-flow alerts framed around origin, propagation, and distribution.
+The emphasis is on who led the flow and whether the rest of the graph is still early or already crowded.
 
 `SCAN -> MAP MOVES -> INFER SECTOR -> SCORE PROPAGATION -> ALERT`
 
