@@ -40,4 +40,8 @@ describe("alert model", () => {
   it("sector is included", () => {
     expect(makeAlert().sector).toBe("infra");
   });
+
+  it("action remains explicit in the alert payload", () => {
+    expect(makeAlert().action).toBe("originating");
+  });
 });
