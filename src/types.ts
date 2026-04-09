@@ -14,6 +14,7 @@ export interface TokenMove {
   mint: string;
   symbol: string;
   amount: number;
+  estimatedUsd: number;
   direction: "in" | "out";
   sector: Sector;
 }

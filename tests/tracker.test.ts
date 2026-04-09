@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { SmartMoneyAlert } from "../src/types.js";
+import { deriveObservedAlertUsd } from "../src/agent/loop.js";
 
 function makeAlert(overrides: Partial<SmartMoneyAlert> = {}): SmartMoneyAlert {
   return {
@@ -43,5 +44,27 @@ describe("alert model", () => {
 
   it("action remains explicit in the alert payload", () => {
     expect(makeAlert().action).toBe("originating");
+  });
+});
+
+describe("alert notional reconciliation", () => {
+  it("derives alert usd from observed matching wallet moves", () => {
+    const observed = deriveObservedAlertUsd(
+      {
+        address: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+        name: "Test VC",
+        label: "vc",
+        txCount: 3,
+        netSolChangeLamports: 0,
+        topMoves: [
+          { mint: "mint1", symbol: "JTO", amount: 1200, estimatedUsd: 42000, direction: "in", sector: "infra" },
+          { mint: "mint2", symbol: "PYTH", amount: 900, estimatedUsd: 8000, direction: "in", sector: "infra" },
+        ],
+        lastSeenAt: Date.now(),
+        rawTxs: [],
+      },
+      ["JTO"],
+    );
+    expect(observed).toBe(42000);
   });
 });

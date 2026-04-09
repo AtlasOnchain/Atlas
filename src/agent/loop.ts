@@ -7,6 +7,16 @@ import crypto from "crypto";
 
 const client = new Anthropic({ apiKey: config.ANTHROPIC_API_KEY });
 
+export function deriveObservedAlertUsd(wallet: WalletActivity | undefined, tokens: string[]): number {
+  if (!wallet) return 0;
+  const requested = new Set(tokens.map((token) => token.toUpperCase()));
+  const observedUsd = wallet.topMoves
+    .filter((move) => requested.has(move.symbol.toUpperCase()))
+    .reduce((sum, move) => sum + move.estimatedUsd, 0);
+  if (observedUsd > 0) return Number(observedUsd.toFixed(2));
+  return Number((wallet.topMoves[0]?.estimatedUsd ?? 0).toFixed(2));
+}
+
 const tools: Anthropic.Tool[] = [
   {
     name: "get_batch_overview",
@@ -109,7 +119,9 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
             label: wallet.label,
             txCount: wallet.txCount,
             netSolChange: (wallet.netSolChangeLamports / 1e9).toFixed(2) + " SOL",
-            topToken: wallet.topMoves[0] ? `${wallet.topMoves[0].symbol} ${wallet.topMoves[0].direction}` : "none",
+            topToken: wallet.topMoves[0]
+              ? `${wallet.topMoves[0].symbol} ${wallet.topMoves[0].direction} $${wallet.topMoves[0].estimatedUsd.toLocaleString()}`
+              : "none",
             topSector: wallet.topMoves[0]?.sector ?? "unknown",
           })),
         );
@@ -122,7 +134,10 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
               label: wallet.label,
               txCount: wallet.txCount,
               netSolChange: (wallet.netSolChangeLamports / 1e9).toFixed(2) + " SOL",
-              topMoves: wallet.topMoves,
+              topMoves: wallet.topMoves.map((move) => ({
+                ...move,
+                estimatedUsd: `$${move.estimatedUsd.toLocaleString()}`,
+              })),
             })
           : "not found in this batch";
       } else if (block.name === "find_correlated_moves") {
@@ -130,6 +145,7 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
         const wallets = tokenCorrelations.get(symbol) ?? [];
         result = JSON.stringify({ token: symbol, movedByWallets: wallets, count: wallets.length });
       } else if (block.name === "emit_alert") {
+        const wallet = byAddress.get(input.wallet_address as string);
         const alert: SmartMoneyAlert = {
           id: crypto.randomUUID(),
           walletAddress: input.wallet_address as string,
@@ -138,7 +154,7 @@ export async function runAtlasAgent(batch: WalletActivity[]): Promise<SmartMoney
           action: input.action as WalletAction,
           tokens: input.tokens as string[],
           sector: input.sector as Sector,
-          estimatedUsd: input.estimated_usd as number,
+          estimatedUsd: deriveObservedAlertUsd(wallet, input.tokens as string[]),
           propagationScore: input.propagation_score as number,
           rationale: input.rationale as string,
           confidence: input.confidence as number,
