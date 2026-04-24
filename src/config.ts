@@ -2,6 +2,8 @@ import { z } from "zod";
 import dotenv from "dotenv";
 dotenv.config();
 
+const TEST_ENV = process.env.NODE_ENV === "test" || process.env.VITEST === "true";
+
 const schema = z.object({
   ANTHROPIC_API_KEY: z.string().min(1),
   HELIUS_API_KEY: z.string().min(1),
@@ -16,7 +18,15 @@ const schema = z.object({
   SEED_WALLETS: z.string().default(""),
 });
 
-const parsed = schema.safeParse(process.env);
+const env = TEST_ENV
+  ? {
+      ANTHROPIC_API_KEY: "test-anthropic-key",
+      HELIUS_API_KEY: "test-helius-key",
+      ...process.env,
+    }
+  : process.env;
+
+const parsed = schema.safeParse(env);
 if (!parsed.success) {
   console.error("Config error:", parsed.error.flatten().fieldErrors);
   process.exit(1);
