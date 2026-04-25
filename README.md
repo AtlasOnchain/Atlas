@@ -34,11 +34,15 @@ Flow Map • Flow Alert • At a Glance • Operating Surfaces • How It Works 
 
 ## Flow Map
 
-![Atlas Wallets](assets/preview-wallets.svg)
+<img src="assets/preview-wallets.png" alt="Atlas flow intelligence desk" width="100%" />
+
+Live flow intelligence desk for Atlas: tracked wallets, sector movement, origin and follower graph, active alert queue, gate status, and propagation scoring across Helius, Claude, and Solana data sources.
 
 ## Flow Alert
 
-![Atlas Alert](assets/preview-alert.svg)
+<img src="assets/preview-alert.png" alt="Atlas flow alert breakdown" width="100%" />
+
+Flow alert breakdown for Atlas: originator and follower sequence, lag-adjusted follow rate, size similarity, sector overlap, propagation score, confidence gate, and alert classification.
 
 ## Operating Surfaces
 
