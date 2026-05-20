@@ -6,3 +6,6 @@ logs/
 coverage/
 .DS_Store
 site/
+# Local env overrides
+.env.local
+.env.*.local
