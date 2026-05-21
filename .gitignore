@@ -59,3 +59,8 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 *~
+
+# Node diagnostic snapshots
+*.heapsnapshot
+*.heapdump
+*.cpuprofile
