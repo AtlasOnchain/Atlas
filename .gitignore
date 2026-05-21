@@ -54,3 +54,8 @@ $RECYCLE.BIN/
 # Preview platform metadata
 .vercel/
 .netlify/
+
+# Editor swap and backup files
+*.swp
+*.swo
+*~
