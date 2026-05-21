@@ -9,3 +9,7 @@ site/
 # Local env overrides
 .env.local
 .env.*.local
+
+# Test and TypeScript caches
+.vitest/
+*.tsbuildinfo
