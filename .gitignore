@@ -37,3 +37,7 @@ coverage-final.json
 # Test report exports
 test-results/
 junit.xml
+
+# Windows metadata
+Desktop.ini
+$RECYCLE.BIN/
