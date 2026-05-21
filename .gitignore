@@ -46,3 +46,7 @@ $RECYCLE.BIN/
 *.pid
 *.pid.lock
 *.seed
+
+# Local SQLite snapshots
+*.sqlite
+*.sqlite3
