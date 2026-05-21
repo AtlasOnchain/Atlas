@@ -33,3 +33,7 @@ pnpm-debug.log*
 # Coverage exports
 *.lcov
 coverage-final.json
+
+# Test report exports
+test-results/
+junit.xml
