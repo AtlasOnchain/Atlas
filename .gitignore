@@ -17,3 +17,9 @@ site/
 # Test and TypeScript caches
 .vitest/
 *.tsbuildinfo
+
+# Scratch workspaces
+tmp/
+temp/
+.tmp/
+.temp/
