@@ -41,3 +41,8 @@ junit.xml
 # Windows metadata
 Desktop.ini
 $RECYCLE.BIN/
+
+# Runtime process files
+*.pid
+*.pid.lock
+*.seed
